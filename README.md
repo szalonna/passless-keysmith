@@ -48,12 +48,12 @@ Determinism guarantees:
 ## Requirements
 
 - Node.js 20+ (tested with Node 22)
-- npm
+- pnpm
 
 ## Install
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Build
@@ -61,7 +61,7 @@ npm install
 Creates a single deployable file:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 Output:
@@ -78,18 +78,18 @@ Notes:
 ### Node tests
 
 ```bash
-npm test
+pnpm test
 ```
 
 This runs:
 
-1. `npm run build:test-core` to produce `.test-dist/password-core.js`
+1. `pnpm run build:test-core` to produce `.test-dist/password-core.js`
 2. `node --test tests/password-core.test.js`
 
 ### Browser tests
 
 ```bash
-npm run test:browser
+pnpm run test:browser
 ```
 
 Then open:
@@ -128,8 +128,8 @@ Main types from `src/types.ts`:
 ## Common commands
 
 ```bash
-npm run build          # build dist/index.html
-npm run build:test-core  # build .test-dist/password-core.js for tests
-npm test               # run Node tests
-npm run test:browser   # serve project for browser tests
+pnpm run build          # build dist/index.html
+pnpm run build:test-core  # build .test-dist/password-core.js for tests
+pnpm test               # run Node tests
+pnpm run test:browser   # serve project for browser tests
 ```
