@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passless Keysmith | Deterministic Password Generator</title>
+  <meta
+    name="description"
+    content="Passless Keysmith is a portable deterministic password generator. Recreate strong passwords from your username, site keyword, and secret phrase without a backend."
+  />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Passless Keysmith | Deterministic Password Generator" />
+  <meta
+    property="og:description"
+    content="Generate consistent strong passwords locally from your inputs. No backend required."
+  />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Passless Keysmith | Deterministic Password Generator" />
+  <meta
+    name="twitter:description"
+    content="Generate consistent strong passwords locally from your inputs. No backend required."
+  />
+  <meta name="theme-color" content="#313244" />
+  <style>/*__INLINE_STYLES__*/</style>
+</head>
+
+<body>
+  <noscript>
+    <p style="padding: 1rem; margin: 0; font-family: sans-serif; background: #fff3cd; color: #5f4900;">
+      Passless Keysmith works best with JavaScript enabled.
+    </p>
+  </noscript>
+
+  <header class="theme-picker" aria-label="Appearance settings">
+    <label for="themeChooser">Theme</label>
+    <select id="themeChooser" aria-label="Theme chooser">
+      <option value="ocean">Ocean Mint</option>
+      <option value="violet">Violet</option>
+      <option value="dracula">Dracula</option>
+      <option value="catppuccin-latte">Catppuccin Latte</option>
+      <option value="catppuccin-frappe">Catppuccin Frappe</option>
+      <option value="catppuccin-mocha">Catppuccin Mocha</option>
+      <option value="nord">Nord</option>
+      <option value="oled-dark">OLED Dark</option>
+      <option value="bright-white">Bright White</option>
+    </select>
+  </header>
+
+  <main class="card">
+    <div class="title-row">
+      <h1>Passless Keysmith</h1>
+      <button type="button" class="help-btn" id="helpBtn" aria-label="Open help dialog" aria-haspopup="dialog"
+        aria-controls="helpDialog" aria-expanded="false">
+        ?
+      </button>
+    </div>
+    <form class="grid two" aria-label="Password generator inputs" onsubmit="return false">
+      <div>
+        <label for="username">Username</label>
+        <input id="username" type="text" autocomplete="off" />
+      </div>
+      <div>
+        <label for="site">Site or keyword</label>
+        <input id="site" type="text" autocomplete="off" />
+      </div>
+      <div style="grid-column: 1 / -1">
+        <label for="secretPhrase">Secret phrase</label>
+        <div class="secret-row">
+          <input id="secretPhrase" type="password" autocomplete="off" />
+          <button type="button" class="action-btn" id="toggleSecretBtn" aria-pressed="false"
+            aria-label="Show secret phrase">
+            Show
+          </button>
+        </div>
+      </div>
+      <div>
+        <label for="version">Version (integer)</label>
+        <input id="version" type="number" step="1" value="1" />
+      </div>
+      <div>
+        <label for="length">Password length</label>
+        <div class="length-row">
+          <input id="length" type="number" min="1" max="64" step="1" value="20" />
+          <input id="lengthSlider" type="range" min="1" max="64" step="1" value="20"
+            aria-label="Password length slider" />
+        </div>
+      </div>
+
+      <fieldset class="charset-group" style="margin-top: var(--space-4); grid-column: 1 / -1">
+        <legend>Available characters</legend>
+        <label class="checkbox-row"><input id="useAlphabet" type="checkbox" checked /> Alphabet (a-z, A-Z)</label>
+        <label class="checkbox-row"><input id="useNumbers" type="checkbox" checked /> Numbers (0-9)</label>
+        <label class="checkbox-row"><input id="useBasic" type="checkbox" checked /> Basic special characters</label>
+        <label class="checkbox-row"><input id="useExtended" type="checkbox" /> Extended special characters</label>
+        <label class="checkbox-row"><input id="useAnyUnicode" type="checkbox" /> Any Unicode characters</label>
+      </fieldset>
+
+      <section style="margin-top: var(--space-4); grid-column: 1 / -1">
+        <label for="password">Generated password</label>
+        <div class="password-row">
+          <input id="password" type="password" readonly aria-describedby="error" />
+          <button type="button" class="action-btn" id="copyBtn">Copy</button>
+        </div>
+        <p class="error" id="error" aria-live="polite" role="status"></p>
+        <p class="status" id="statusMessage" aria-live="polite"></p>
+      </section>
+    </form>
+
+  </main>
+
+  <dialog class="help-dialog" id="helpDialog" aria-labelledby="helpTitle" aria-describedby="helpSummary">
+    <div class="help-content">
+      <h2 id="helpTitle">How To Use Passless</h2>
+      <p id="helpSummary">
+        Passless helps you create strong passwords you can recreate anytime. You do not need to remember the password
+        itself, only your settings.
+      </p>
+      <ul>
+        <li><strong>Username</strong>: your login name. Example: <code>anna.smith</code>.</li>
+        <li><strong>Site or keyword</strong>: what account this is for. Example: <code>gmail.com</code> or
+          <code>my-bank</code>.</li>
+        <li><strong>Secret phrase</strong>: your private phrase only you know. Example:
+          <code>Blue coffee morning 42</code>.</li>
+        <li><strong>Version</strong>: keep as <code>1</code> at first. If a site asks you to change your password later,
+          set it to <code>2</code>.</li>
+        <li><strong>Password length</strong>: use the slider or number box. Longer usually means stronger.</li>
+        <li><strong>Character options</strong>: choose letters, numbers, and symbols based on site rules.</li>
+        <li><strong>Themes</strong>: change colors to what is easiest for your eyes.</li>
+      </ul>
+      <p>
+        Benefits: no password storage needed, works offline, and gives the same result every time for the same inputs.
+      </p>
+      <p>
+        You can keep the same <strong>Username</strong> and <strong>Secret phrase</strong> for many accounts. Usually
+        only the <strong>Site or keyword</strong> changes between websites.
+      </p>
+      <p>
+        Tip: keep your secret phrase private and use a consistent pattern so you can regenerate passwords later.
+      </p>
+      <div class="help-actions">
+        <button type="button" id="closeHelpBtn" autofocus>Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <aside class="privacy-notice" aria-label="Privacy notice">
+    <button type="button" class="privacy-notice-close" id="closePrivacyNoticeBtn" aria-label="Close privacy notice">
+      Close
+    </button>
+    <p>
+      We use privacy-focused analytics provided by Cloudflare to monitor website performance and usage in real time.
+      No cookies or similar tracking technologies are used, and data is processed in aggregated form without
+      identifying individual users. Analytics is processed based on our legitimate interest in improving our services.
+      See our
+      <button type="button" class="privacy-link" id="openPrivacyPolicyBtn">Privacy Policy</button>
+      for details.
+    </p>
+  </aside>
+
+  <dialog class="privacy-policy-dialog" id="privacyPolicyDialog" aria-labelledby="privacyPolicyTitle">
+    <div class="privacy-policy-content">
+      <div class="privacy-policy-header">
+        <h2 id="privacyPolicyTitle">Privacy Policy</h2>
+        <button type="button" id="closePrivacyPolicyBtn" aria-label="Close privacy policy">Close</button>
+      </div>
+      <p><strong>1. Overview</strong></p>
+      <p>
+        This website uses privacy-focused analytics to understand performance and usage patterns. We aim to minimize
+        data collection and avoid tracking individuals.
+      </p>
+      <p><strong>2. Data Controller</strong></p>
+      <p>
+        The operator of this website is the data controller responsible for processing personal data under applicable
+        laws, including the General Data Protection Regulation (GDPR) and relevant U.S. privacy laws.
+      </p>
+      <p><strong>3. Analytics Processing</strong></p>
+      <p>We use analytics services provided by Cloudflare (Cloudflare, Inc.).</p>
+      <ul>
+        <li>No cookies or similar tracking technologies are used</li>
+        <li>No cross-site tracking is performed</li>
+        <li>Data is processed in aggregated form</li>
+      </ul>
+      <p>The purpose of this processing is to:</p>
+      <ul>
+        <li>monitor website performance</li>
+        <li>detect errors and outages</li>
+        <li>improve user experience</li>
+      </ul>
+      <p><strong>4. Data Collected</strong></p>
+      <p>During normal operation, limited technical data may be processed, such as:</p>
+      <ul>
+        <li>IP address (processed transiently)</li>
+        <li>browser and device type</li>
+        <li>pages visited and interaction timing</li>
+        <li>performance metrics (e.g. load times)</li>
+      </ul>
+      <p>We do not use this data to identify individuals.</p>
+      <p><strong>5. Legal Basis (EU)</strong></p>
+      <p>
+        Under the General Data Protection Regulation, processing is based on Article 6(1)(f) — legitimate interest —
+        to operate, secure, and improve our website.
+      </p>
+      <p><strong>6. U.S. Privacy Rights</strong></p>
+      <p>Depending on your location (e.g. California under the California Consumer Privacy Act / CPRA):</p>
+      <ul>
+        <li>We do not sell personal information</li>
+        <li>We do not share personal information for cross-context behavioral advertising</li>
+        <li>Data is used only for operational and analytical purposes</li>
+      </ul>
+      <p>
+        You may have rights to request access, deletion, or information about data processing. Contact us using the
+        details below.
+      </p>
+      <p><strong>7. Data Sharing and Processing</strong></p>
+      <p>
+        Analytics data is processed by Cloudflare as a service provider (processor). Data may be processed in the
+        United States and other jurisdictions where Cloudflare operates.
+      </p>
+      <p>Where required, appropriate safeguards such as Standard Contractual Clauses are used.</p>
+      <p><strong>8. Data Retention</strong></p>
+      <p>
+        We retain analytics data only as long as necessary for aggregated analysis and system performance monitoring.
+        Raw or identifiable data, if any, is minimized and retained for a limited period.
+      </p>
+      <p><strong>9. Security</strong></p>
+      <p>
+        We implement technical and organizational measures to protect data, including encryption in transit and access
+        controls.
+      </p>
+      <p><strong>10. Your Rights (EU)</strong></p>
+      <p>Under GDPR, you may have the right to:</p>
+      <ul>
+        <li>access your personal data</li>
+        <li>request correction or deletion</li>
+        <li>object to processing based on legitimate interest</li>
+        <li>lodge a complaint with a supervisory authority</li>
+      </ul>
+      <p><strong>11. Contact</strong></p>
+      <p>For privacy-related inquiries, contact:<br />privacy@passless-keysmith.com</p>
+      <p><strong>12. Updates</strong></p>
+      <p>
+        This Privacy Policy may be updated from time to time to reflect legal or operational changes.
+      </p>
+    </div>
+  </dialog>
+
+  <script>/*__INLINE_APP_SCRIPT__*/</script>
+</body>
+
+</html>

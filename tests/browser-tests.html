@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Passless Browser Tests</title>
+    <style>
+      body { font-family: "Segoe UI", sans-serif; margin: 2rem; }
+      .ok { color: #0a7a1c; }
+      .fail { color: #a72323; }
+      code { background: #f0f3f7; padding: 0.1rem 0.3rem; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>Passless Browser Tests</h1>
+    <ol id="results"></ol>
+
+    <script type="module">
+      import { CHAR_SETS, generatePassword } from "../.test-dist/password-core.js";
+
+      const results = document.getElementById("results");
+
+      function addResult(name, pass, details = "") {
+        const li = document.createElement("li");
+        li.className = pass ? "ok" : "fail";
+        li.textContent = `${pass ? "PASS" : "FAIL"}: ${name}${details ? ` - ${details}` : ""}`;
+        results.appendChild(li);
+      }
+
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+      }
+
+      function inRange(codePoint, start, end) {
+        return codePoint >= start && codePoint <= end;
+      }
+
+      function isAllowedAnyUnicodeCodePoint(codePoint) {
+        const assignedVisible = /[\p{L}\p{N}\p{P}\p{S}]/u.test(String.fromCodePoint(codePoint));
+        const privateUse =
+          inRange(codePoint, 0xe000, 0xf8ff) ||
+          inRange(codePoint, 0xf0000, 0xffffd) ||
+          inRange(codePoint, 0x100000, 0x10fffd);
+        const rareCjk =
+          inRange(codePoint, 0x20000, 0x2a6df) ||
+          inRange(codePoint, 0x2a700, 0x2b73f) ||
+          inRange(codePoint, 0x2b740, 0x2b81f) ||
+          inRange(codePoint, 0x2b820, 0x2ceaf) ||
+          inRange(codePoint, 0x2ceb0, 0x2ebef) ||
+          inRange(codePoint, 0x2ebf0, 0x2ee5f) ||
+          inRange(codePoint, 0x30000, 0x3134f) ||
+          inRange(codePoint, 0x31350, 0x323af);
+        const nonCharacter = inRange(codePoint, 0xfdd0, 0xfdef) || (codePoint & 0xfffe) === 0xfffe;
+
+        return assignedVisible && !privateUse && !rareCjk && !nonCharacter;
+      }
+
+      function baseConfig() {
+        return {
+          username: "alice",
+          site: "example.com",
+          secretPhrase: "my secret",
+          version: 1,
+          length: 24,
+          useAlphabet: true,
+          useNumbers: true,
+          useBasic: true,
+          useExtended: false,
+          useAnyUnicode: false,
+        };
+      }
+
+      async function run() {
+        try {
+          const c = baseConfig();
+          const p1 = await generatePassword(c);
+          const p2 = await generatePassword(c);
+          assert(p1 === p2, "password must be deterministic");
+          addResult("deterministic output", true);
+        } catch (err) {
+          addResult("deterministic output", false, err.message);
+        }
+
+        try {
+          const c1 = baseConfig();
+          const c2 = { ...baseConfig(), version: 2 };
+          const p1 = await generatePassword(c1);
+          const p2 = await generatePassword(c2);
+          assert(p1 !== p2, "different version should produce different password");
+          addResult("version changes output", true);
+        } catch (err) {
+          addResult("version changes output", false, err.message);
+        }
+
+        try {
+          const c1 = { ...baseConfig(), site: "https://www.example.com/" };
+          const c2 = { ...baseConfig(), site: "http://example.com////" };
+          const p1 = await generatePassword(c1);
+          const p2 = await generatePassword(c2);
+          assert(p1 === p2, "equivalent URL forms should generate same password");
+          addResult("url normalization", true);
+        } catch (err) {
+          addResult("url normalization", false, err.message);
+        }
+
+        try {
+          const c = { ...baseConfig(), useAlphabet: false, useBasic: false, useNumbers: true };
+          const p = await generatePassword(c);
+          for (const ch of p) assert(CHAR_SETS.numbers.includes(ch), `invalid char: ${ch}`);
+          addResult("charset restriction respected", true);
+        } catch (err) {
+          addResult("charset restriction respected", false, err.message);
+        }
+
+        try {
+          const c = {
+            ...baseConfig(),
+            useAlphabet: false,
+            useNumbers: false,
+            useBasic: false,
+            useAnyUnicode: true,
+            length: 40,
+          };
+          const p = await generatePassword(c);
+          for (const ch of Array.from(p)) {
+            const codePoint = ch.codePointAt(0);
+            assert(codePoint !== undefined, "missing code point");
+            assert(isAllowedAnyUnicodeCodePoint(codePoint), `disallowed code point: U+${codePoint.toString(16).toUpperCase()}`);
+          }
+          addResult("any unicode characters", true);
+        } catch (err) {
+          addResult("any unicode characters", false, err.message);
+        }
+      }
+
+      run();
+    </script>
+  </body>
+</html>
