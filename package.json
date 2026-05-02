@@ -8,11 +8,14 @@
     "typecheck": "tsc --noEmit --project tsconfig.json && tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --lib ES2022,DOM --strict src/app.ts",
     "pretest": "pnpm run typecheck && pnpm run build:test-core",
     "test": "node --test tests/password-core.test.js",
-    "test:browser": "pnpm run build:test-core && npx --yes serve@14.2.3 -l 4173 ."
+    "test:browser": "pnpm run build:test-core && npx --yes serve@14.2.3 -l 4173 .",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "devDependencies": {
     "@types/node": "^22.15.29",
     "esbuild": "^0.25.5",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.87.0"
   }
 }
