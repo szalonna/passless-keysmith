@@ -6,9 +6,9 @@
     "build": "node scripts/build.mjs",
     "build:test-core": "node scripts/build-test-core.mjs",
     "typecheck": "tsc --noEmit --project tsconfig.json && tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --lib ES2022,DOM --strict src/app.ts",
-    "pretest": "npm run typecheck && npm run build:test-core",
+    "pretest": "pnpm run typecheck && pnpm run build:test-core",
     "test": "node --test tests/password-core.test.js",
-    "test:browser": "npm run build:test-core && npx --yes serve@14.2.3 -l 4173 ."
+    "test:browser": "pnpm run build:test-core && npx --yes serve@14.2.3 -l 4173 ."
   },
   "devDependencies": {
     "@types/node": "^22.15.29",
